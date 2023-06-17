@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #duck {
+      width: 50px;
+      height: 50px;
+      background-color: yellow;
+      position: relative;
+    }
+    .bread {
+      width: 20px;
+      height: 20px;
+      background-color: brown;
+      position: absolute;
+    }
+    .cat {
+      width: 60px;
+      height: 60px;
+      background-color: gray;
+      position: absolute;
+    }
+  </style>
+</head>
+<body>
+  <div id="duck"></div>
+
+  <script>
+    var duck = document.getElementById('duck');
+    var positionX = 0;
+    var breadCount = 0;
+
+    // Move the duck
+    function moveDuck(event) {
+      if (event.keyCode === 65) { // 'A' key
+        positionX -= 10;
+      } else if (event.keyCode === 68) { // 'D' key
+        positionX += 10;
+      }
+      duck.style.left = positionX + 'px';
+    }
+
+    // Jump the duck
+    function jumpDuck(event) {
+      if (event.keyCode === 87 && duck.style.bottom === '0px') { // 'W' key
+        duck.style.bottom = '100px';
+        setTimeout(function() {
+          duck.style.bottom = '0px';
+        }, 500);
+      }
+    }
+
+    // Collect bread
+    function collectBread(bread) {
+      breadCount++;
+      bread.style.display = 'none';
+      if (breadCount >= 5) {
+        document.removeEventListener('keydown', jumpDuck);
+      }
+    }
+
+    // Defeat cats
+    function defeatCat(cat) {
+      if (breadCount > 0) {
+        cat.style.display = 'none';
+        breadCount--;
+        if (breadCount < 5) {
+          document.addEventListener('keydown', jumpDuck);
+        }
+      }
+    }
+
+    // Create bread
+    function createBread() {
+      var bread = document.createElement('div');
+      bread.className = 'bread';
+      bread.style.left = Math.floor(Math.random() * 400) + 'px';
+      bread.style.top = Math.floor(Math.random() * 400) + 'px';
+      bread.addEventListener('click', function() {
+        collectBread(bread);
+      });
+      document.body.appendChild(bread);
+    }
+
+    // Create cats
+    function createCat() {
+      var cat = document.createElement('div');
+      cat.className = 'cat';
+      cat.style.left = Math.floor(Math.random() * 400) + 'px';
+      cat.style.top = Math.floor(Math.random() * 400) + 'px';
+      cat.addEventListener('click', function() {
+        defeatCat(cat);
+      });
+      document.body.appendChild(cat);
+    }
+
+    // Generate bread and cats at intervals
+    setInterval(function() {
+      createBread();
+      createCat();
+    }, 3000);
+
+    // Event listeners for duck movement and jumping
+    document.addEventListener('keydown', moveDuck);
+    document.addEventListener('keydown', jumpDuck);
+  </script>
+</body>
+</html>
